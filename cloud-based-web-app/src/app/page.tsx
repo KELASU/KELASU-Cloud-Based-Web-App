@@ -1,8 +1,7 @@
-'use client'; // This is a client component because it's interactive
+'use client'; 
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-// Define a type for a single tab for TypeScript
 type Tab = {
   id: number;
   header: string;
@@ -10,39 +9,91 @@ type Tab = {
 };
 
 export default function HomePage() {
-  // State to hold the array of tabs
   const [tabs, setTabs] = useState<Tab[]>([
-    { id: 1, header: 'Step 1', content: '1. Install VSCode' },
-    { id: 2, header: 'Step 2', content: '2. Install Chrome' },
+    { id: 1, header: 'Step 1', content: '1. Install VSCode\n2. Install Node' },
+    { id: 2, header: 'Step 2', content: 'Your content here...' },
   ]);
 
-  // We will add more logic here...
+  const [generatedCode, setGeneratedCode] = useState('');
 
+  useEffect(() => {
+    const generateTabsCode = (tabData: Tab[]): string => {
+      const tabButtons = tabData.map((tab, index) => 
+        `<button class="tab-button" style="padding: 10px; border: 1px solid #ccc;" onclick="openTab(event, 'tab${index}')">${tab.header}</button>`
+      ).join('');
+
+      const tabContents = tabData.map((tab, index) => 
+        `<div id="tab${index}" class="tab-content" style="display: none; padding: 10px; border: 1px solid #ccc; border-top: none;">
+          <p>${tab.content.replace(/\n/g, '<br>')}</p>
+        </div>`
+      ).join('');
+
+      const finalCode = `<!DOCTYPE html><html><head><title>Tabs</title></head><body><h2>Tabs</h2><div class="tab-container">${tabButtons}</div>${tabContents}<script>function openTab(evt, tabName){var i,tabcontent,tablinks;tabcontent=document.getElementsByClassName("tab-content");for(i=0;i<tabcontent.length;i++){tabcontent[i].style.display="none";}tablinks=document.getElementsByClassName("tab-button");for(i=0;i<tablinks.length;i++){tablinks[i].style.backgroundColor="";}document.getElementById(tabName).style.display="block";evt.currentTarget.style.backgroundColor="#ddd";}document.getElementsByClassName("tab-button")[0].click();<\/script></body></html>`;
+      return finalCode;
+    };
+    
+    setGeneratedCode(generateTabsCode(tabs));
+  }, [tabs]); 
+
+  const handleTabChange = (id: number, field: 'header' | 'content', value: string) => {
+    setTabs(currentTabs => 
+      currentTabs.map(tab => {
+        if (tab.id === id) {
+          return { ...tab, [field]: value }; 
+        }
+        return tab;
+      })
+    );
+  };
+
+  const addTab = () => {
+    console.log('Adding a new tab...');
+  };
+  
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(generatedCode);
+    alert('Code copied to clipboard!');
+  };
   return (
     <main className="p-8">
-      <h1 className="text-2xl font-bold">Tabs Component Generator</h1>
-      <div className="flex gap-8 mt-4">
-        <div className="w-1/2">
-          <h2>Tab Configuration</h2>
-          {tabs.map((tab, index) => (
-            <div key={tab.id} className="mb-4 p-2 border rounded">
-              <label>Tab {index + 1} Header</label>
-              <input
-                type="text"
-                value={tab.header}
-                className="w-full p-1 border rounded"
-              />
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold">Tabs</h2>
+        <div>
+          <span>Dark Mode Switch</span>
+        </div>
+      </div>
 
-              <label className="mt-2">Tab {index + 1} Content</label>
-              <textarea
-                value={tab.content}
-                className="w-full p-1 border rounded"
-              />
+      <div className="flex gap-8">
+        <div className="w-1/2 flex gap-4">
+          <div className="w-1/3">
+            <h3 className="font-semibold mb-2">Tabs Headers: [+]</h3>
+            <div className="border rounded p-2 space-y-1">
+              {tabs.map(tab => (
+                <div key={tab.id} className="p-2 border rounded cursor-pointer hover:bg-gray-100">
+                  {tab.header}
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          <div className="w-2/3">
+            <h3 className="font-semibold mb-2">Tabs Content</h3>
+            <textarea 
+              className="w-full h-48 p-2 border rounded"
+              placeholder="Content of the selected tab will be editable here..."
+            />
+          </div>
         </div>
+
         <div className="w-1/2">
+          <button className="px-4 py-1 border rounded mb-2">Output</button>
+          <pre className="p-2 border rounded bg-gray-800 text-white overflow-auto h-[500px]">
+            <code>
+              {generatedCode}
+            </code>
+          </pre>
         </div>
+
       </div>
     </main>
   );
