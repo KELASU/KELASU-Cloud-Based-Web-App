@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 
-// Define a type for a single tab
 type Tab = {
   id: number;
   header: string;
@@ -92,8 +91,7 @@ ${tabContents}
     setTabs(currentTabs => [...currentTabs, newTab]);
     setSelectedTabId(newTab.id);
   };
-  
-  // RESTORED: Function to copy the code to the clipboard
+
   const handleCopyCode = () => {
     navigator.clipboard.writeText(generatedCode);
     alert('Code copied to clipboard!');
@@ -157,7 +155,6 @@ ${tabContents}
         </div>
 
         <div className="w-1/2">
-          {/* UPDATED: Added a flex container for two buttons */}
           <div className="flex gap-2 mb-2">
             <button onClick={handleCopyCode} className="px-4 py-1 border rounded">
               Output Code
