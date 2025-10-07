@@ -1,6 +1,7 @@
 'use client'; 
 
 import { useState, useEffect } from 'react';
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 type Tab = {
   id: number;
@@ -70,7 +71,7 @@ export default function HomePage() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Tabs</h2>
         <div>
-          <span>Dark Mode Switch</span>
+        <ThemeSwitcher />
         </div>
       </div>
 
