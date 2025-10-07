@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
+// Define a type for a single tab
 type Tab = {
   id: number;
   header: string;
@@ -21,16 +22,50 @@ export default function HomePage() {
   useEffect(() => {
     const generateTabsCode = (tabData: Tab[]): string => {
       const tabButtons = tabData.map((tab, index) => 
-        `<button class="tab-button" style="padding: 10px; border: 1px solid #ccc;" onclick="openTab(event, 'tab${index}')">${tab.header}</button>`
-      ).join('');
+        `\t\t<button class="tab-button" onclick="openTab(event, 'tab${index}')">${tab.header}</button>`
+      ).join('\n');
 
       const tabContents = tabData.map((tab, index) => 
-        `<div id="tab${index}" class="tab-content" style="display: none; padding: 10px; border: 1px solid #ccc; border-top: none;">
-          <p>${tab.content.replace(/\n/g, '<br>')}</p>
-        </div>`
-      ).join('');
-
-      const finalCode = `<!DOCTYPE html><html><head><title>Tabs</title></head><body><h2>Tabs</h2><div class="tab-container">${tabButtons}</div>${tabContents}<script>function openTab(evt, tabName){var i,tabcontent,tablinks;tabcontent=document.getElementsByClassName("tab-content");for(i=0;i<tabcontent.length;i++){tabcontent[i].style.display="none";}tablinks=document.getElementsByClassName("tab-button");for(i=0;i<tablinks.length;i++){tablinks[i].style.backgroundColor="";}document.getElementById(tabName).style.display="block";evt.currentTarget.style.backgroundColor="#ddd";}document.getElementsByClassName("tab-button")[0].click();<\/script></body></html>`;
+        `\t\t<div id="tab${index}" class="tab-content">
+\t\t\t<p>${tab.content.replace(/\n/g, '\n\t\t\t\t')}</p>
+\t\t</div>`
+      ).join('\n');
+      
+      const finalCode = `<!DOCTYPE html>
+<html>
+<head>
+\t<title>Tabs</title>
+\t<style>
+\t\t.tab-content { display: none; padding: 10px; border: 1px solid #ccc; border-top: none; }
+\t\t.tab-button { padding: 10px; border: 1px solid #ccc; background-color: #f1f1f1; }
+\t\t.tab-button.active { background-color: #ddd; }
+\t</style>
+</head>
+<body>
+\t<h2>Generated Tabs</h2>
+\t<div class="tab-container">
+${tabButtons}
+\t</div>
+${tabContents}
+\t<script>
+\t\tfunction openTab(evt, tabName) {
+\t\t\tlet i, tabcontent, tablinks;
+\t\t\ttabcontent = document.getElementsByClassName("tab-content");
+\t\t\tfor (i = 0; i < tabcontent.length; i++) {
+\t\t\t\ttabcontent[i].style.display = "none";
+\t\t\t}
+\t\t\ttablinks = document.getElementsByClassName("tab-button");
+\t\t\tfor (i = 0; i < tablinks.length; i++) {
+\t\t\t\ttablinks[i].className = tablinks[i].className.replace(" active", "");
+\t\t\t}
+\t\t\tdocument.getElementById(tabName).style.display = "block";
+\t\t\tevt.currentTarget.className += " active";
+\t\t}
+\t\tdocument.querySelector(".tab-button").click();
+\t<\/script>
+</body>
+</html>`;
+      
       return finalCode;
     };
     
@@ -49,6 +84,13 @@ export default function HomePage() {
   };
 
   const addTab = () => {
+    const newTab: Tab = {
+      id: Date.now(),
+      header: `New Tab ${tabs.length + 1}`,
+      content: '',
+    };
+    setTabs(currentTabs => [...currentTabs, newTab]);
+    setSelectedTabId(newTab.id);
     const newTab: Tab = {
       id: Date.now(),
       header: `New Tab ${tabs.length + 1}`,

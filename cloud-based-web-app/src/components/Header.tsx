@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <header className="border-b">
       <div className=" mx-auto flex justify-center items-center relative p-2">
-        <h1 className="text-2xl font-bold">Title</h1>
+        <h1 className="text-2xl font-bold">LaTrobe University LMS</h1>
         <div className="font-mono text-sm absolute right-4">{LTUID}</div>
       </div>
 
