@@ -8,7 +8,6 @@ type Tab = {
   content: string;
 };
 
-// RENAMED: The component is now called TabsPage
 export default function TabsPage() {
   const [tabs, setTabs] = useState<Tab[]>([
     { id: 1, header: 'Step 1', content: '1. Install VSCode\n2. Install Node' },
@@ -29,8 +28,8 @@ export default function TabsPage() {
 
       const tabContents = tabData.map((tab, index) => 
         `\t\t<div id="tab${index}" class="tab-content">
-\t\t\t<p>${tab.content.replace(/\n/g, '\n\t\t\t\t')}</p>
-\t\t</div>`
+\t\t\t<p>${tab.content}</p> 
+\t\t</div>` // REMOVED: No longer need to replace \n with <br>
       ).join('\n');
       
       const finalCode = `<!DOCTYPE html>
@@ -41,6 +40,8 @@ export default function TabsPage() {
 \t\t.tab-content { display: none; padding: 10px; border: 1px solid #ccc; border-top: none; }
 \t\t.tab-button { padding: 10px; border: 1px solid #ccc; background-color: #f1f1f1; }
 \t\t.tab-button.active { background-color: #ddd; }
+        /* NEW: This rule tells the <p> tag to respect line breaks */
+\t\tp { white-space: pre-wrap; } 
 \t</style>
 </head>
 <body>
@@ -72,7 +73,7 @@ ${tabContents}
     };
     
     setGeneratedCode(generateTabsCode(tabs));
-  }, [tabs]); 
+  }, [tabs]);
 
   const handleTabChange = (id: number, field: 'header' | 'content', value: string) => {
     setTabs(currentTabs => 
@@ -145,7 +146,7 @@ a.click();
             {selectedTab ? (
               <textarea 
                 value={selectedTab.content}
-                onChange={(e) => handleTabChange(tab.id, 'content', e.target.value)}
+                onChange={(e) => handleTabChange(selectedTab.id, 'content', e.target.value)}
                 className="w-full h-48 p-2 border rounded"
                 placeholder="Content of the selected tab will be editable here..."
               />
