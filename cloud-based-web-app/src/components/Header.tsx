@@ -1,5 +1,5 @@
 import Link from 'next/link';
-
+import { ThemeSwitcher } from './ThemeSwitcher';
 export default function Header() {
   const LTUID = "22586517";
 
@@ -21,6 +21,7 @@ export default function Header() {
         </nav>
         
         <div className="flex items-center gap-4">
+          <ThemeSwitcher />
           <Link href="/about">About</Link>
           <div className="space-y-1">
             <span className="block w-6 h-0.5 bg-white"></span>

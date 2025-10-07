@@ -1,7 +1,6 @@
 'use client'; 
 
 import { useState, useEffect } from 'react';
-import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 // Define a type for a single tab
 type Tab = {
@@ -17,7 +16,7 @@ export default function HomePage() {
   ]);
 
   const [selectedTabId, setSelectedTabId] = useState<number | null>(tabs[0]?.id || null);
-
+  
   const [generatedCode, setGeneratedCode] = useState('');
 
   useEffect(() => {
@@ -92,51 +91,50 @@ ${tabContents}
     };
     setTabs(currentTabs => [...currentTabs, newTab]);
     setSelectedTabId(newTab.id);
-    const newTab: Tab = {
-      id: Date.now(),
-      header: `New Tab ${tabs.length + 1}`,
-      content: '',
-    };
-    setTabs(currentTabs => [...currentTabs, newTab]);
-    setSelectedTabId(newTab.id);
   };
-
+  
+  // RESTORED: Function to copy the code to the clipboard
   const handleCopyCode = () => {
     navigator.clipboard.writeText(generatedCode);
     alert('Code copied to clipboard!');
   };
 
+  const handleDownloadHtml = () => {
+    const blob = new Blob([generatedCode], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tabs.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const selectedTab = tabs.find(tab => tab.id === selectedTabId);
 
   return (
-    <main className="p-8 bg-background text-text-color dark:bg-dark-background dark:text-dark-text-color">
+    <main className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Tabs</h2>
-        <div>
-        <ThemeSwitcher />
-        </div>
       </div>
 
       <div className="flex gap-8">
         <div className="w-1/2 flex gap-4">
           <div className="w-1/3">
             <h3 className="font-semibold mb-2 flex justify-between items-center">
-              Tabs Headers
-              <button onClick={addTab} className="text-lg text-accent dark:text-dark-accent hover:scale-125 transition-transform">[+]</button>
+              Tabs Headers <button onClick={addTab} className="text-lg hover:scale-125 transition-transform">[+]</button>
             </h3>
-            <div className="border border-primary/50 dark:border-dark-primary/50 rounded p-2 space-y-1">
+            <div className="border rounded p-2 space-y-2">
               {tabs.map(tab => (
-                <div 
+                <input 
                   key={tab.id}
+                  type="text"
+                  value={tab.header}
                   onClick={() => setSelectedTabId(tab.id)}
-                  className={`p-2 border rounded cursor-pointer transition-colors
-                    ${selectedTabId === tab.id 
-                      ? 'bg-primary/80 text-white dark:bg-dark-primary/80 dark:text-dark-text-color' 
-                      : 'hover:bg-primary/20 dark:hover:bg-dark-primary/20'}`
-                  }
-                >
-                  {tab.header}
-                </div>
+                  onChange={(e) => handleTabChange(tab.id, 'header', e.target.value)}
+                  className={`w-full p-2 border rounded cursor-pointer transition-colors ${selectedTabId === tab.id ? 'bg-blue-500 text-white' : 'hover:bg-gray-100'}`}
+                />
               ))}
             </div>
           </div>
@@ -147,18 +145,28 @@ ${tabContents}
               <textarea 
                 value={selectedTab.content}
                 onChange={(e) => handleTabChange(selectedTab.id, 'content', e.target.value)}
-                className="w-full h-48 p-2 border border-primary/50 dark:border-dark-primary/50 rounded bg-background dark:bg-dark-background"
+                className="w-full h-48 p-2 border rounded"
                 placeholder="Content of the selected tab will be editable here..."
               />
             ) : (
-              <p>Select a tab to edit its content.</p>
+              <div className="w-full h-48 p-2 border rounded bg-gray-50 flex items-center justify-center">
+                <p className="text-gray-400">Select a tab to edit</p>
+              </div>
             )}
           </div>
         </div>
 
         <div className="w-1/2">
-          <button onClick={handleCopyCode} className="px-4 py-1 border border-accent dark:border-dark-accent rounded mb-2 hover:bg-accent/20 dark:hover:bg-dark-accent/20 transition-colors">Output</button>
-          <pre className="p-2 border border-primary/50 dark:border-dark-primary/50 rounded bg-text-color text-background dark:bg-dark-text-color dark:text-dark-background overflow-auto h-[500px]">
+          {/* UPDATED: Added a flex container for two buttons */}
+          <div className="flex gap-2 mb-2">
+            <button onClick={handleCopyCode} className="px-4 py-1 border rounded">
+              Output Code
+            </button>
+            <button onClick={handleDownloadHtml} className="px-4 py-1 border rounded">
+              Output Html
+            </button>
+          </div>
+          <pre className="p-2 border rounded bg-gray-800 text-white overflow-auto h-[500px]">
             <code>
               {generatedCode}
             </code>
