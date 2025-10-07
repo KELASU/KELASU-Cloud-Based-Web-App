@@ -8,11 +8,6 @@ type Tab = {
   content: string;
 };
 
-<<<<<<< Updated upstream
-// RENAMED: The component is now called TabsPage
-export default function TabsPage() {
-  const [tabs, setTabs] = useState<Tab[]>([
-=======
 const getInitialTabs = (): Tab[] => {
   if (typeof window !== 'undefined') {
     const savedTabs = localStorage.getItem('savedTabs');
@@ -21,7 +16,6 @@ const getInitialTabs = (): Tab[] => {
     }
   }
   return [
->>>>>>> Stashed changes
     { id: 1, header: 'Step 1', content: '1. Install VSCode\n2. Install Node' },
     { id: 2, header: 'Step 2', content: 'Your content here...' },
   ];
@@ -43,13 +37,8 @@ export default function TabsPage() {
       ).join('\n');
 
       const tabContents = tabData.map((tab, index) => 
-<<<<<<< Updated upstream
-        `\t\t<div id="tab${index}" class="tab-content">
-\t\t\t<p>${tab.content.replace(/\n/g, '\n\t\t\t\t')}</p>
-=======
         `\t\t<div id="tab${index}" style="display: none; padding: 10px; border: 1px solid #ccc; border-top: none;">
 \t\t\t<p style="white-space: pre-wrap;">${tab.content}</p> 
->>>>>>> Stashed changes
 \t\t</div>`
       ).join('\n');
 
@@ -57,14 +46,6 @@ export default function TabsPage() {
 <html>
 <head>
 \t<title>Tabs</title>
-<<<<<<< Updated upstream
-\t<style>
-\t\t.tab-content { display: none; padding: 10px; border: 1px solid #ccc; border-top: none; }
-\t\t.tab-button { padding: 10px; border: 1px solid #ccc; background-color: #f1f1f1; }
-\t\t.tab-button.active { background-color: #ddd; }
-\t</style>
-=======
->>>>>>> Stashed changes
 </head>
 <body>
 \t<h2>Generated Tabs</h2>
@@ -157,13 +138,8 @@ ${tabContents}
             {selectedTab ? (
               <textarea 
                 value={selectedTab.content}
-<<<<<<< Updated upstream
-                onChange={(e) => handleTabChange(tab.id, 'content', e.target.value)}
-                className="w-full h-48 p-2 border rounded"
-=======
                 onChange={(e) => handleTabChange(selectedTab.id, 'content', e.target.value)}
                 className="w-full h-48 p-2 border border-[var(--primary)]/50 rounded bg-[var(--background)]"
->>>>>>> Stashed changes
                 placeholder="Content of the selected tab will be editable here..."
               />
             ) : (
