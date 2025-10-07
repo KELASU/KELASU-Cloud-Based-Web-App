@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FEF3E2;
-  --primary: #FA812F;
+  --background: #fef1e2;
+  --primary: #ff3c00;
   --accent: #FAB12F;
   --destructive: #DD0303;
   --text-color: #27272a;
@@ -28,4 +28,5 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.2s, color 0.2s;
 }

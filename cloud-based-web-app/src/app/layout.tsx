@@ -13,18 +13,14 @@ export const metadata: Metadata = {
   description: "LTU ASSIGNMENT - Kenneth Lay 22586517",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode; 
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode; }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider>
-          <div className="flex flex-col min-h-screen bg-background text-text-color dark:bg-dark-background dark:text-dark-text-color transition-colors duration-200">
+          <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="p-8">
+            <main className="flex-grow container mx-auto">
               {children}
             </main>
             <Footer />
