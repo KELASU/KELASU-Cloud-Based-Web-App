@@ -76,7 +76,7 @@ ${tabContents}
     };
     
     setGeneratedCode(generateTabsCode(tabs));
-  }, [tabs]); 
+  }, [tabs]);
 
   const handleTabChange = (id: number, field: 'header' | 'content', value: string) => {
     setTabs(currentTabs => 
