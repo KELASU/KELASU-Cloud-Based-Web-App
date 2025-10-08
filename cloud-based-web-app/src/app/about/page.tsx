@@ -10,10 +10,16 @@ export default function AboutPage() {
   
         <div className="mt-8">
           <h2 className="text-xl font-semibold">How to Use This Website</h2>
-          <p className="mt-2">
-            A video walkthrough will be placed here.
-          </p>
-          {/* Video*/}
+          <div className="mt-4 w-full max-w-2xl mx-auto">
+          <video 
+            className="w-full h-auto rounded-lg shadow-lg"
+            src="/videos/WEBAPP-As1-Walkthrough.mp4"
+            controls 
+            preload="metadata"
+          >
+            Your browser does not support the video tag.
+          </video>
+        </div>
         </div>
       </main>
     );

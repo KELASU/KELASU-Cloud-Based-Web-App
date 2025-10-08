@@ -10,9 +10,16 @@ export default function Header() {
   const LTUID = "22586517";
   const [activePath, setActivePath] = useState('');
   const pathname = usePathname();
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // NEW: State to track if the component has mounted on the client
+  const [mounted, setMounted] = useState(false);
+
+  // NEW: This effect runs only once in the browser
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const lastPath = Cookies.get('lastActivePath') || '/tabs';
@@ -64,32 +71,37 @@ export default function Header() {
         </nav>
         
         <div className="flex items-center gap-4">
-          <ThemeSwitcher />
-          <Link href="/about" className={activePath === '/about' ? 'font-bold text-[var(--primary)]' : ''}>About</Link>
-          
-          <div className="relative" ref={menuRef}>
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)} 
-              className="space-y-1 p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
-              aria-label="Open menu"
-            >
-              <span className="block w-6 h-0.5 bg-[var(--primary)]"></span>
-              <span className="block w-6 h-0.5 bg-[var(--primary)]"></span>
-              <span className="block w-6 h-0.5 bg-[var(--primary)]"></span>
-            </button>
 
-            {isMenuOpen && (
-              <div className="absolute top-full right-0 mt-2 w-48 bg-[var(--background)] border border-[var(--primary)]/20 rounded-md shadow-lg z-10">
-                <ul>
-                  <li>
-                    <a href="setting" className="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--primary)]/20">
-                      Settings
-                    </a>
-                  </li>
-                </ul>
+          {mounted && (
+            <>
+              <ThemeSwitcher />
+              <Link href="/about" className={activePath === '/about' ? 'font-bold text-[var(--primary)]' : ''}>About</Link>
+              
+              <div className="relative" ref={menuRef}>
+                <button 
+                  onClick={() => setIsMenuOpen(!isMenuOpen)} 
+                  className="relative z-20 flex h-8 w-8 flex-col items-center justify-center gap-1.5"
+                  aria-label="Open menu"
+                >
+                  <span className={`block h-0.5 w-6 bg-[var(--primary)] transition-all duration-300 ${isMenuOpen ? 'translate-y-2 rotate-45' : ''}`}></span>
+                  <span className={`block h-0.5 w-6 bg-[var(--primary)] transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}></span>
+                  <span className={`block h-0.5 w-6 bg-[var(--primary)] transition-all duration-300 ${isMenuOpen ? '-translate-y-2 -rotate-45' : ''}`}></span>
+                </button>
+
+                {isMenuOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-[var(--background)] border border-[var(--primary)]/20 rounded-md shadow-lg z-10">
+                    <ul>
+                      <li>
+                        <Link href="/setting" className="block px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--primary)]/20">
+                          Settings
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </div>
     </header>
