@@ -1,6 +1,7 @@
 # Multi-Part Assignment for cloud based web application
 
 **This assignment is two part:**
+
 **First part (current) :** Front-end + cookie and localStorage persistence
 
 **Second part:** Backend
