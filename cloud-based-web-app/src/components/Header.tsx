@@ -13,10 +13,8 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // NEW: State to track if the component has mounted on the client
   const [mounted, setMounted] = useState(false);
 
-  // NEW: This effect runs only once in the browser
   useEffect(() => {
     setMounted(true);
   }, []);

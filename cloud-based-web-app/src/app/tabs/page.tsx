@@ -8,7 +8,6 @@ type Tab = {
   content: string;
 };
 
-// Define the default tabs for the initial server render
 const defaultTabs: Tab[] = [
   { id: 1, header: 'Step 1', content: '1. Install VSCode\n2. Install Node' },
   { id: 2, header: 'Step 2', content: 'Your content here...' },
@@ -19,10 +18,8 @@ export default function TabsPage() {
   const [selectedTabId, setSelectedTabId] = useState<number | null>(null);
   const [generatedCode, setGeneratedCode] = useState('');
   
-  // NEW: State to manage the generated tabs' header text
   const [headerText, setHeaderText] = useState('Generated Tabs');
 
-  // Safely loads saved tabs on the client side
   useEffect(() => {
     const savedTabs = localStorage.getItem('savedTabs');
     if (savedTabs) {
@@ -34,12 +31,10 @@ export default function TabsPage() {
     }
   }, []);
 
-  // Saves tabs to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('savedTabs', JSON.stringify(tabs));
   }, [tabs]);
 
-  // Generates the HTML code whenever the tabs or header text change
   useEffect(() => {
     const generateTabsCode = (tabData: Tab[], title: string) => {
       if (tabData.length === 0) return '';
@@ -88,7 +83,7 @@ ${tabContents}
     };
     
     setGeneratedCode(generateTabsCode(tabs, headerText));
-  }, [tabs, headerText]); // Added headerText to dependency array
+  }, [tabs, headerText]);
 
   const handleTabChange = (id: number, field: 'header' | 'content', value: string) => {
     setTabs(currentTabs => 

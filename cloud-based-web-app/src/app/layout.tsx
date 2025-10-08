@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import React from "react";
-import { ThemeLoader } from "@/components/ThemeLoader"; // Import the new component
+import { ThemeLoader } from "@/components/ThemeLoader"; 
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider>
-          <ThemeLoader /> {/* Add the ThemeLoader here */}
+          <ThemeLoader /> 
           <div className="flex flex-col min-h-screen bg-[var(--background)] text-[var(--text-color)] transition-colors duration-200">
             <Header />
             <main className="flex-grow container mx-auto">
