@@ -38,7 +38,7 @@
 You will need to have Node.js and pnpm installed on your system.
 
 * [Node.js](https://nodejs.org/)
-* [pnpm](https://pnpm.io/installation) (not really required)
+* [pnpm](https://pnpm.io/installation) (not really required normal npm is enough)
 
 ### How To Use/Start
 
