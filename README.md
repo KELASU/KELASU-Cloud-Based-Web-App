@@ -40,6 +40,15 @@ You will need to have Node.js and pnpm installed on your system.
 * [Node.js](https://nodejs.org/)
 * [pnpm](https://pnpm.io/installation) (not really required)
 
+### How To Use/Start
+
+* Download the zip
+* Extract the file
+* The extracted folder should be name **KELASU-Cloud-Based-Web-App**
+* Open the folder in a code editor
+* In the terminal run ` cd .\cloud-based-web-app\ ` alternatively you can directly open **cloud-base-web-app** folder
+* than run `npm install` in the command line/terminal
+* and run `npm run dev`
 ---
 
 ##  USage Guide
