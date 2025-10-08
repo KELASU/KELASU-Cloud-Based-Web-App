@@ -1,10 +1,12 @@
-# HTML5 Tabs Component Generator
+# Multi-Part Assignment for cloud based web application
 
-A dynamic web application built with Next.js that allows users to create, configure, and export a fully functional HTML5 tabs component. This tool is designed to quickly generate self-contained HTML files with in-line CSS and JavaScript, perfect for deployment in any web environment, such as a Moodle LMS.
+**This assignment is two part:**
+**First part (current) :** Front-end + cookie and localStorage persistence
+**Second part:** Backend
 
 ---
 
-## ✨ Features
+## Current Features
 
 * **Interactive Tab Editor:**
     * Dynamically add, remove, and rename up to 15 tabs.
@@ -13,21 +15,21 @@ A dynamic web application built with Next.js that allows users to create, config
 * **Instant Code Generation:**
     * See the generated HTML file in real-time as you make changes.
     * The output is a clean, well-formatted, self-contained HTML document.
-* **Flexible Output Options:**
+* **Multiple Output Options:**
     * **Copy Code:** Instantly copy the complete HTML to your clipboard.
     * **Download .html:** Download the code as a ready-to-use `.html` file.
 * **Customizable & Accessible Interface:**
     * **Theme Customization:** A full settings page to change the application's primary, accent, and destructive colors.
     * **Light/Dark Mode:** A persistent, user-toggleable theme switcher.
     * **Colorblind Mode:** Includes accessible theme options for Protanopia, Deuteranopia, and Tritanopia.
-* **Modern Tech Stack:**
+* **Using Modern Up-to-date Technology:**
     * Built with **Next.js** and the App Router.
     * Styled with **Tailwind CSS**.
     * Written in **TypeScript**.
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 Follow these instructions to get a copy of the project up and running on your local machine.
 
@@ -36,31 +38,11 @@ Follow these instructions to get a copy of the project up and running on your lo
 You will need to have Node.js and pnpm installed on your system.
 
 * [Node.js](https://nodejs.org/)
-* [pnpm](https://pnpm.io/installation)
-
-### Installation
-
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://your-repository-url.com](https://your-repository-url.com)
-    ```
-2.  **Navigate to the project directory:**
-    ```bash
-    cd your-project-folder
-    ```
-3.  **Install dependencies:**
-    ```bash
-    pnpm install
-    ```
-4.  **Run the development server:**
-    ```bash
-    npm run dev
-    ```
-5.  Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* [pnpm](https://pnpm.io/installation) (not really required)
 
 ---
 
-##  usage
+##  USage Guide
 
 1.  Navigate to the **Tabs** page at `http://localhost:3000/tabs`.
 2.  Use the `[+]` and `[-]` buttons to add or remove tabs.
@@ -69,8 +51,4 @@ You will need to have Node.js and pnpm installed on your system.
 5.  Use the **"Copy Code"** or **"Download .html"** buttons to get your generated component.
 6.  Navigate to the **Settings** page via the hamburger menu to customize your theme.
 
----
 
-## 🎬 Project Demo
-
-*(This is a great place to add a screenshot or a GIF of your application in action!)*
