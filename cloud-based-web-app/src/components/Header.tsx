@@ -62,8 +62,11 @@ export default function Header() {
             <li className="pr-4 border-r border-gray-400">
               <Link href="/escape-room" className={activePath === '/escape-room' ? 'font-bold text-[var(--primary)]' : ''}>Escape Room</Link>
             </li>
-            <li>
+            <li className="pr-4 border-r border-gray-400">
               <Link href="/coding-race" className={activePath === '/coding-race' ? 'font-bold text-[var(--primary)]' : ''}>Coding Races</Link>
+            </li>
+            <li>
+              <Link href="/court-room" className={activePath === '/court-room' ? 'font-bold text-[var(--primary)]' : ''}>Court Room</Link>
             </li>
           </ul>
         </nav>
