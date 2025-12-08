@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "js-cookie": "^3.0.5",
     "next": "15.5.3",
     "next-themes": "^0.4.6",
