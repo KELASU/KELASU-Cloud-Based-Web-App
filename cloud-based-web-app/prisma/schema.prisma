@@ -1,0 +1,29 @@
+// Run: npx prisma db push after saving this file
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model EscapeLevel {
+  id        String   @id @default(uuid())
+  name      String
+  author    String
+  bgImage   String?  
+  winImage  String?  // <--- Added this field for the success screen
+  puzzles   Json     
+  createdAt DateTime @default(now())
+}
+
+model Score {
+  id        String   @id @default(uuid())
+  game      String   // 'ESCAPE_ROOM' or 'COURT_ROOM'
+  difficulty String? // 'Beginner', 'Intermediate', 'Expert' or 'Custom'
+  player    String
+  value     Int      // Time remaining (Escape) or Legal Health (Court)
+  createdAt DateTime @default(now())
+}
