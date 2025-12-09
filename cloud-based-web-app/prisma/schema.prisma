@@ -2,7 +2,6 @@
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -21,9 +20,9 @@ model EscapeLevel {
 
 model Score {
   id        String   @id @default(uuid())
-  game      String   // 'ESCAPE_ROOM' or 'COURT_ROOM'
-  difficulty String? // 'Beginner', 'Intermediate', 'Expert' or 'Custom'
+  game      String
+  difficulty String?
   player    String
-  value     Int      // Time remaining (Escape) or Legal Health (Court)
+  value     Int
   createdAt DateTime @default(now())
 }

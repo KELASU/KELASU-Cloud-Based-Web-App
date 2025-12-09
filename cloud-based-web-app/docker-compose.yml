@@ -1,13 +1,14 @@
 version: '3.8'
 services:
   postgres:
-    image: postgres:15-alpine
+    image: postgres:18-alpine
     container_name: escape-room-postgres
     restart: always
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
+      POSTGRES_USER: kenneth
+      POSTGRES_PASSWORD: pass24
       POSTGRES_DB: escapedb
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - '5432:5432'
     volumes:
