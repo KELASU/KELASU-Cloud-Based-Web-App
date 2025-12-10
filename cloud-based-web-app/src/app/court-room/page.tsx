@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 
-// --- DATA BANKS FOR PROCEDURAL GENERATION ---
 const BUGS = [
     { code: '<img src="logo.png" />', fix: 'alt=', desc: 'Missing Alt Text' },
     { code: '<input type="text" />', fix: 'aria-label=', desc: 'Missing ARIA Label' },
@@ -48,20 +47,16 @@ export default function ProceduralCourtRoom() {
     const [userCode, setUserCode] = useState('');
     const [shiftDifficulty, setShiftDifficulty] = useState<'Intern' | 'Senior' | 'Lead'>('Intern');
     
-    // Leaderboard State (Mock)
     const [leaderboard, setLeaderboard] = useState([
         { name: "Dev_X", score: 950 },
         { name: "CodeLawyer", score: 820 },
     ]);
 
-    // --- PROCEDURAL GENERATOR ---
     const startNewShift = (difficulty: string) => {
-        // 1. Pick a random bug
         const randomBug = BUGS[Math.floor(Math.random() * BUGS.length)];
         setCurrentBug(randomBug);
         setUserCode(randomBug.code);
         
-        // 2. Set Stats based on difficulty
         const time = difficulty === 'Intern' ? 45 : difficulty === 'Senior' ? 60 : 90;
         setTimer(time);
         setHealth(100);
@@ -70,12 +65,10 @@ export default function ProceduralCourtRoom() {
         setGameState('playing');
     };
 
-    // --- GAME LOOP ---
     useEffect(() => {
         if (gameState !== 'playing') return;
 
         const loop = setInterval(() => {
-            // 1. Timer
             setTimer(prev => {
                 if (prev <= 0) {
                     setGameState('won');
@@ -97,10 +90,9 @@ export default function ProceduralCourtRoom() {
                 });
             }
 
-            // 3. Procedural Message Spawning
             const spawnChance = shiftDifficulty === 'Intern' ? 0.3 : 0.6;
             if (Math.random() < spawnChance) {
-                const isUrgent = Math.random() > 0.7; // 30% chance of urgent
+                const isUrgent = Math.random() > 0.7;
                 const pool = isUrgent ? URGENT_PHRASES : CASUAL_PHRASES;
                 const text = pool[Math.floor(Math.random() * pool.length)];
                 const sender = SENDERS[Math.floor(Math.random() * SENDERS.length)];
@@ -111,7 +103,7 @@ export default function ProceduralCourtRoom() {
                     message: text,
                     isUrgent
                 };
-                setActiveNotes(prev => [...prev.slice(-4), newMsg]); // Keep max 5 messages
+                setActiveNotes(prev => [...prev.slice(-4), newMsg]); 
             }
 
         }, 1000);
@@ -121,15 +113,11 @@ export default function ProceduralCourtRoom() {
 
     const fixCode = () => {
         if (!userCode.includes(currentBug.fix)) {
-            // Auto-Fix Simulation
             setUserCode(`${userCode} <!-- ${currentBug.fix} applied -->`);
-            // Reward
             setHealth(h => Math.min(100, h + 15));
-            setActiveNotes(prev => prev.filter(n => !n.isUrgent)); // Clear urgent messages
+            setActiveNotes(prev => prev.filter(n => !n.isUrgent));
         }
     };
-
-    // --- SCREENS ---
 
     if (gameState === 'intro') {
         return (
@@ -207,7 +195,6 @@ export default function ProceduralCourtRoom() {
         );
     }
 
-    // --- PLAYING UI ---
     return (
         <div className="min-h-screen bg-gray-900 text-white flex flex-col overflow-hidden font-sans">
             {/* HUD */}
@@ -231,7 +218,6 @@ export default function ProceduralCourtRoom() {
             </div>
 
             <div className="flex-1 relative p-8">
-                {/* IDE */}
                 <div className="w-2/3 h-96 bg-gray-800 rounded-lg border border-gray-600 shadow-2xl overflow-hidden flex flex-col">
                     <div className="bg-gray-900 p-2 text-xs flex gap-2 border-b border-gray-700">
                         <div className="w-3 h-3 rounded-full bg-red-500"/>
@@ -254,7 +240,6 @@ export default function ProceduralCourtRoom() {
                     </div>
                 </div>
 
-                {/* NOTIFICATIONS */}
                 <div className="absolute top-8 right-8 w-80 space-y-3">
                     {activeNotes.map((note) => (
                         <div 
