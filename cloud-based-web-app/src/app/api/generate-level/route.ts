@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
+import { generateContentWithRetry } from "@/utils/gemini";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || '');
 
@@ -49,7 +50,9 @@ export async function POST() {
       Make the theme related to cybersecurity or space exploration.
     `;
 
-    const result = await model.generateContent(prompt);
+
+    const result = await generateContentWithRetry(model, prompt);
+    
     const response = await result.response;
     const text = response.text();
 
@@ -70,8 +73,13 @@ export async function POST() {
     
     return NextResponse.json(data);
     
-  } catch (error) {
+  } catch (error: any) {
     console.error("AI Generation Error:", error);
+
+    if (error.message?.includes('Quota Exceeded') || error.message?.includes('429')) {
+         return NextResponse.json({ error: "High traffic. Please try again in a few seconds." }, { status: 429 });
+    }
+
     return NextResponse.json({ error: "Failed to generate level" }, { status: 500 });
   }
 }

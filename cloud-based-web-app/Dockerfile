@@ -1,0 +1,58 @@
+FROM node:20-alpine AS base
+
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile --ignore-scripts; \
+  elif [ -f package-lock.json ]; then npm ci --ignore-scripts; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile --ignore-scripts; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
+FROM base AS builder
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+ENV NEXT_TELEMETRY_DISABLED=1
+
+ARG DATABASE_URL
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+
+# Add Google API Key to build environment
+ARG GOOGLE_API_KEY
+ENV GOOGLE_API_KEY=$GOOGLE_API_KEY
+
+RUN npx prisma generate
+
+RUN npm run build
+
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Persist Google API Key in the final image
+ARG GOOGLE_API_KEY
+ENV GOOGLE_API_KEY=$GOOGLE_API_KEY
+
+USER nextjs
+
+EXPOSE 3000
+ENV PORT=3000
+
+CMD ["node", "server.js"]
