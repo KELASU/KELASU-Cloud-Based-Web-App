@@ -1,0 +1,27 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider   = "prisma-client-js"
+
+}
+
+model EscapeLevel {
+  id        String   @id @default(uuid())
+  name      String
+  author    String
+  bgImage   String?  
+  winImage  String?
+  puzzles   Json     
+  createdAt DateTime @default(now())
+}
+
+model Score {
+  id         String   @id @default(uuid())
+  game       String   
+  difficulty String? 
+  player     String
+  value      Int      
+  createdAt  DateTime @default(now())
+}

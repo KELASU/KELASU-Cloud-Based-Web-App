@@ -8,9 +8,8 @@ export default function CodingRacesVisual() {
   const [userInput, setUserInput] = useState('');
   const [progress, setProgress] = useState(0);
   const [botProgress, setBotProgress] = useState(0);
-  const [status, setStatus] = useState('idle'); // idle, racing, won, lost
+  const [status, setStatus] = useState('idle'); 
 
-  // Bot Logic (Opponent)
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (status === 'racing') {
@@ -20,7 +19,7 @@ export default function CodingRacesVisual() {
             setStatus('lost');
             return 100;
           }
-          return prev + 0.8; // Bot speed
+          return prev + 0.8;
         });
       }, 100);
     }
@@ -34,11 +33,10 @@ export default function CodingRacesVisual() {
     const val = e.target.value;
     setUserInput(val);
 
-    // Calculate progress based on correct characters
     let correctChars = 0;
     for (let i = 0; i < val.length; i++) {
         if (val[i] === CODE_TO_TYPE[i]) correctChars++;
-        else break; // Stop counting at first mistake
+        else break;
     }
 
     const percentage = (correctChars / CODE_TO_TYPE.length) * 100;
@@ -55,38 +53,31 @@ export default function CodingRacesVisual() {
             SPEED CODER 3000
         </h1>
 
-        {/* RACE TRACK VISUAL */}
         <div className="w-full max-w-4xl bg-gray-800 rounded-lg p-6 border-4 border-gray-700 relative mb-12 shadow-2xl">
-            
-            {/* Lane 1: Player */}
+
             <div className="mb-8 relative">
                 <div className="text-xs text-blue-400 mb-1 font-bold">YOU (Developer)</div>
                 <div className="h-12 bg-gray-900 rounded-full w-full relative overflow-hidden border border-blue-900/50">
                     <div className="absolute top-0 bottom-0 left-0 bg-blue-600 opacity-20" style={{ width: `${progress}%`, transition: 'width 0.2s' }}></div>
-                    {/* The Car Icon */}
+
                     <div className="absolute top-1 text-3xl transition-all duration-200" style={{ left: `calc(${progress}% - 30px)` }}>
                         🏎️
                     </div>
                 </div>
             </div>
-
-            {/* Lane 2: Bot */}
             <div className="relative">
                 <div className="text-xs text-red-400 mb-1 font-bold">OPPONENT (AI Copilot)</div>
                 <div className="h-12 bg-gray-900 rounded-full w-full relative overflow-hidden border border-red-900/50">
                     <div className="absolute top-0 bottom-0 left-0 bg-red-600 opacity-20" style={{ width: `${botProgress}%`, transition: 'width 0.2s' }}></div>
-                    {/* The Car Icon */}
                     <div className="absolute top-1 text-3xl transition-all duration-200" style={{ left: `calc(${botProgress}% - 30px)` }}>
                         🚔
                     </div>
                 </div>
             </div>
 
-            {/* Finish Line */}
             <div className="absolute top-0 bottom-0 right-10 w-2 bg-checkered opacity-50 border-l border-white/20"></div>
         </div>
 
-        {/* TYPING AREA */}
         <div className="w-full max-w-2xl text-center">
             <div className="mb-4 bg-black p-4 rounded-lg font-mono text-lg text-left shadow-inner border border-gray-700 select-none">
                 {CODE_TO_TYPE.split('').map((char, index) => {
@@ -107,7 +98,6 @@ export default function CodingRacesVisual() {
                 disabled={status === 'won' || status === 'lost'}
             />
 
-            {/* GAME STATUS OVERLAY */}
             {(status === 'won' || status === 'lost') && (
                 <div className="mt-8 animate-fade-in">
                     <h2 className={`text-5xl font-bold ${status === 'won' ? 'text-green-500' : 'text-red-500'}`}>
