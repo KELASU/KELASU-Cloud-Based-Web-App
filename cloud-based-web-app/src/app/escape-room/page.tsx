@@ -2,12 +2,7 @@
 
 import { useState, useRef, DragEvent, useEffect } from 'react';
 
-<<<<<<< Updated upstream
-// --- ICONS ---
-const LockIcon = () => <span className="text-3xl">🔒</span>;
-const UnlockIcon = () => <span className="text-3xl">🔓</span>;
-const AIIcon = () => <span className="text-xl">✨</span>;
-=======
+// --- ICONS (SVG) ---
 const LockIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
     <path d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7c0-2.757-2.243-5-5-5zm0 2c1.654 0 3 1.346 3 3v3H9V7c0-1.654 1.346-3 3-3zm0 10a2 2 0 110-4 2 2 0 010 4z" />
@@ -18,7 +13,6 @@ const UnlockIcon = () => (
     <path d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7a1 1 0 012 0v3h2V7c0-2.757-2.243-5-5-5zm0 10a2 2 0 110-4 2 2 0 010 4z" />
   </svg>
 );
->>>>>>> Stashed changes
 const SaveIcon = () => <span className="text-xl">💾</span>;
 
 // --- TYPES ---
@@ -41,12 +35,9 @@ type LevelData = {
     puzzles: PuzzleConfig[];
 };
 
-<<<<<<< Updated upstream
-// --- MOCK DATABASE (For "Load Level" feature) ---
-=======
 type GameDifficulty = 'Beginner' | 'Intermediate' | 'Expert';
 
->>>>>>> Stashed changes
+// --- MOCK DATABASE (Simulating loaded levels) ---
 const MOCK_DB_LEVELS: LevelData[] = [
     {
         id: '1', name: 'The Dark Server Room', author: 'SysAdmin_99', 
@@ -63,28 +54,22 @@ const MOCK_DB_LEVELS: LevelData[] = [
 ];
 
 export default function EscapeRoomHybrid() {
-<<<<<<< Updated upstream
-    // Modes: 'menu', 'challenge' (AI), 'custom_select', 'builder', 'playing'
+    // Modes: 'menu', 'difficulty_select', 'custom_select', 'builder', 'playing_custom', 'playing_challenge'
     const [mode, setMode] = useState<string>('menu');
     const [currentLevel, setCurrentLevel] = useState<LevelData | null>(null);
     const [isAIProcessing, setIsAIProcessing] = useState(false);
-
-    // --- AI GENERATION MOCK ---
-    const generateAILevel = async () => {
-=======
-
-    const [mode, setMode] = useState<string>('menu');
-    const [currentLevel, setCurrentLevel] = useState<LevelData | null>(null);
-    const [isAIProcessing, setIsAIProcessing] = useState(false);
-
+    
+    // Challenge State
     const [difficulty, setDifficulty] = useState<GameDifficulty>('Beginner');
     const [challengeLevelNum, setChallengeLevelNum] = useState(1);
     const [challengeTimeLeft, setChallengeTimeLeft] = useState(0);
     const [challengeActive, setChallengeActive] = useState(false);
 
+    // Database State
     const [dbLevels, setDbLevels] = useState<LevelData[]>([]);
     const [isLoadingLevels, setIsLoadingLevels] = useState(false);
 
+    // --- FETCH LEVELS FROM DATABASE ---
     useEffect(() => {
         if (mode === 'custom_select') {
             setIsLoadingLevels(true);
@@ -98,6 +83,7 @@ export default function EscapeRoomHybrid() {
         }
     }, [mode]);
 
+    // --- CHALLENGE TIMER ---
     useEffect(() => {
         let timer: NodeJS.Timeout;
         if (challengeActive && challengeTimeLeft > 0) {
@@ -115,10 +101,12 @@ export default function EscapeRoomHybrid() {
         return () => clearInterval(timer);
     }, [challengeActive, challengeTimeLeft]);
 
+    // --- START CHALLENGE ---
     const startChallenge = (diff: GameDifficulty) => {
         setDifficulty(diff);
         setChallengeLevelNum(1);
-
+        
+        // Set Timer based on Difficulty
         let time = 600; // Beginner: 10 mins
         if (diff === 'Intermediate') time = 420; // 7 mins
         if (diff === 'Expert') time = 180; // 3 mins
@@ -128,59 +116,61 @@ export default function EscapeRoomHybrid() {
         generateAILevel('playing_challenge');
     };
 
+    // --- GENERATE AI LEVEL ---
     const generateAILevel = async (targetMode: string) => {
->>>>>>> Stashed changes
         setIsAIProcessing(true);
-        
-        // SIMULATING GEMINI FLASH CALL...
-        // In real app: const data = await generateEscapeLevelAction();
-        setTimeout(() => {
-            const aiLevel: LevelData = {
-                id: 'ai_gen_' + Date.now(),
-                name: 'AI Generated Protocol',
-                author: 'Gemini Flash',
-                bgImage: 'https://placehold.co/1920x1080/220033/FFF?text=AI+Construct',
-                puzzles: [
-                    {
-                        id: 1, title: 'Neural Link', desc: 'Fix the synaptic weights loop.', 
-                        initialCode: 'while(false) { learn(); }', requiredString: 'true', 
-                        successMsg: 'Link Established', top: 30, left: 40
-                    },
-                    {
-                        id: 2, title: 'Data Stream', desc: 'Filter the noise array.', 
-                        initialCode: '// filter code', requiredString: 'filter', 
-                        successMsg: 'Stream Clear', top: 60, left: 70
-                    }
-                ]
-            };
-            setCurrentLevel(aiLevel);
+        try {
+            const response = await fetch('/api/generate-level', { method: 'POST' });
+            if (!response.ok) throw new Error('API request failed');
+
+            const aiLevel = await response.json();
+            if (aiLevel) {
+                const safeLevel = {
+                    ...aiLevel,
+                    puzzles: aiLevel.puzzles.map((p: any, index: number) => ({
+                        ...p,
+                        id: index + 1
+                    }))
+                };
+                setCurrentLevel(safeLevel);
+                setMode(targetMode);
+            } else {
+                alert("AI failed to generate a level.");
+                setChallengeActive(false);
+                setMode('menu');
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error connecting to AI service.");
+            setChallengeActive(false);
+            setMode('menu');
+        } finally {
             setIsAIProcessing(false);
-<<<<<<< Updated upstream
-            setMode('playing');
-        }, 2000);
-=======
         }
     };
 
+    // --- HANDLE LEVEL COMPLETE ---
     const onLevelComplete = () => {
         if (mode === 'playing_custom') {
+            // Custom mode just wins
             alert("Level Complete!");
             setMode('custom_select');
         } else if (mode === 'playing_challenge') {
             if (challengeLevelNum >= 10) {
+                // Victory!
                 setChallengeActive(false);
                 setMode('victory');
             } else {
+                // Next Level
                 setChallengeLevelNum(prev => prev + 1);
                 generateAILevel('playing_challenge');
             }
         }
->>>>>>> Stashed changes
     };
 
     const handleLoadLevel = (level: LevelData) => {
         setCurrentLevel(level);
-        setMode('playing');
+        setMode('playing_custom');
     };
 
     const handleCreateNew = () => {
@@ -190,29 +180,26 @@ export default function EscapeRoomHybrid() {
         setMode('builder');
     };
 
+    // --- RENDER MODES ---
+
     if (mode === 'menu') {
         return (
-            <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center p-8">
+            <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center p-8 font-sans">
                 <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
-
+                    {/* Challenge Card */}
                     <div 
-                        onClick={generateAILevel}
+                        onClick={() => setMode('difficulty_select')}
                         className="bg-gradient-to-br from-purple-900 to-indigo-900 p-8 rounded-2xl border border-purple-500 cursor-pointer hover:scale-105 transition-transform flex flex-col items-center text-center group"
                     >
-                        {isAIProcessing ? (
-                            <div className="animate-spin text-4xl">✨</div>
-                        ) : (
-                            <>
-                                <div className="text-6xl mb-4 group-hover:animate-pulse">🤖</div>
-                                <h2 className="text-3xl font-bold mb-2">Challenge Mode</h2>
-                                <p className="text-purple-200">
-                                    Procedurally generated by AI. <br/>
-                                    Infinite replayability.
-                                </p>
-                            </>
-                        )}
+                        <div className="text-6xl mb-4 group-hover:animate-bounce">🤖</div>
+                        <h2 className="text-3xl font-bold mb-2">Challenge Mode</h2>
+                        <p className="text-purple-200">
+                            10 AI Generated Levels.<br/>
+                            Can you beat the clock?
+                        </p>
                     </div>
 
+                    {/* Custom Card */}
                     <div 
                         onClick={() => setMode('custom_select')}
                         className="bg-gradient-to-br from-green-900 to-emerald-900 p-8 rounded-2xl border border-green-500 cursor-pointer hover:scale-105 transition-transform flex flex-col items-center text-center"
@@ -228,38 +215,38 @@ export default function EscapeRoomHybrid() {
         );
     }
 
+    if (mode === 'difficulty_select') {
+        return (
+            <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-8">
+                <h1 className="text-4xl font-bold mb-8">Select Difficulty</h1>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
+                    <button onClick={() => startChallenge('Beginner')} className="p-6 bg-green-800 rounded-xl hover:bg-green-700 transition-all border border-green-500">
+                        <h3 className="text-2xl font-bold">Beginner</h3>
+                        <p className="mt-2">10 Minutes</p>
+                    </button>
+                    <button onClick={() => startChallenge('Intermediate')} className="p-6 bg-yellow-800 rounded-xl hover:bg-yellow-700 transition-all border border-yellow-500">
+                        <h3 className="text-2xl font-bold">Intermediate</h3>
+                        <p className="mt-2">7 Minutes</p>
+                    </button>
+                    <button onClick={() => startChallenge('Expert')} className="p-6 bg-red-800 rounded-xl hover:bg-red-700 transition-all border border-red-500">
+                        <h3 className="text-2xl font-bold">Expert</h3>
+                        <p className="mt-2">3 Minutes</p>
+                    </button>
+                </div>
+                <button onClick={() => setMode('menu')} className="mt-8 text-gray-400 hover:text-white">Cancel</button>
+            </div>
+        );
+    }
+
     if (mode === 'custom_select') {
         return (
             <div className="min-h-screen bg-slate-900 text-white p-8">
                 <button onClick={() => setMode('menu')} className="mb-8 text-gray-400 hover:text-white">← Back</button>
                 <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold">Community Levels (SQL DB)</h1>
-                    <button 
-                        onClick={handleCreateNew}
-                        className="bg-blue-600 px-6 py-2 rounded font-bold hover:bg-blue-500"
-                    >
-                        + Create New Level
-                    </button>
+                    <h1 className="text-3xl font-bold">Community Levels</h1>
+                    <button onClick={handleCreateNew} className="bg-blue-600 px-6 py-2 rounded font-bold hover:bg-blue-500">+ Create New Level</button>
                 </div>
 
-<<<<<<< Updated upstream
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {MOCK_DB_LEVELS.map(level => (
-                        <div key={level.id} className="bg-slate-800 rounded-lg overflow-hidden border border-slate-700 hover:border-blue-500 transition-colors">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={level.bgImage} className="w-full h-32 object-cover" alt="preview" />
-                            <div className="p-4">
-                                <h3 className="font-bold text-lg">{level.name}</h3>
-                                <p className="text-sm text-gray-400">by {level.author}</p>
-                                <div className="mt-4 flex justify-between items-center">
-                                    <span className="text-xs bg-slate-700 px-2 py-1 rounded">{level.puzzles.length} Puzzles</span>
-                                    <button 
-                                        onClick={() => handleLoadLevel(level)}
-                                        className="text-green-400 font-bold hover:underline"
-                                    >
-                                        PLAY
-                                    </button>
-=======
                 {isLoadingLevels ? (
                     <div className="text-center text-gray-400 mt-20">Loading levels from Database...</div>
                 ) : (
@@ -269,6 +256,7 @@ export default function EscapeRoomHybrid() {
                         )}
                         {dbLevels.map(level => (
                             <div key={level.id} className="bg-slate-800 rounded-lg overflow-hidden border border-slate-700 hover:border-blue-500 transition-colors">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={level.bgImage || 'https://placehold.co/600x400?text=No+Image'} className="w-full h-32 object-cover" alt="preview" />
                                 <div className="p-4">
                                     <h3 className="font-bold text-lg">{level.name}</h3>
@@ -277,12 +265,11 @@ export default function EscapeRoomHybrid() {
                                         <span className="text-xs bg-slate-700 px-2 py-1 rounded">{Array.isArray(level.puzzles) ? level.puzzles.length : 0} Puzzles</span>
                                         <button onClick={() => handleLoadLevel(level)} className="text-green-400 font-bold hover:underline">PLAY</button>
                                     </div>
->>>>>>> Stashed changes
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
             </div>
         );
     }
@@ -291,60 +278,124 @@ export default function EscapeRoomHybrid() {
         return <BuilderComponent level={currentLevel} onExit={() => setMode('custom_select')} />;
     }
 
-    if (mode === 'playing' && currentLevel) {
-        return <GameComponent level={currentLevel} onExit={() => setMode('menu')} />;
+    if ((mode === 'playing_custom' || mode === 'playing_challenge') && currentLevel) {
+        if (isAIProcessing) {
+            return (
+                <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center animate-pulse">
+                    <h2 className="text-4xl font-bold mb-4">Generating Level {challengeLevelNum}/10...</h2>
+                    <p className="text-purple-400">Consulting AI Architect</p>
+                </div>
+            );
+        }
+        return (
+            <GameComponent 
+                level={currentLevel} 
+                mode={mode}
+                challengeStats={mode === 'playing_challenge' ? { level: challengeLevelNum, timeLeft: challengeTimeLeft } : undefined}
+                onComplete={onLevelComplete}
+                onExit={() => setMode('menu')} 
+            />
+        );
+    }
+
+    if (mode === 'game_over' || mode === 'victory') {
+        return <LeaderboardRegister 
+            result={mode} 
+            score={mode === 'victory' ? challengeTimeLeft : challengeLevelNum} 
+            difficulty={difficulty}
+            onExit={() => setMode('menu')} 
+        />;
     }
 
     return null;
 }
 
-<<<<<<< Updated upstream
-// --- BUILDER COMPONENT (Simplified for integration) ---
-=======
->>>>>>> Stashed changes
+// --- BUILDER COMPONENT ---
 function BuilderComponent({ level, onExit }: { level: LevelData, onExit: () => void }) {
     const [puzzles, setPuzzles] = useState(level.puzzles);
     const [bgImage, setBgImage] = useState(level.bgImage);
+    const [levelName, setLevelName] = useState(level.name);
+    const [editingId, setEditingId] = useState<number | null>(null);
     const [saving, setSaving] = useState(false);
+    const [draggedPuzzleId, setDraggedPuzzleId] = useState<number | null>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setSaving(true);
-        // SIMULATE PRISMA SAVE
-        setTimeout(() => {
-            alert("Level Saved to Database!");
-            setSaving(false);
+        try {
+            const res = await fetch('/api/levels', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: levelName, author: "Current User", bgImage: bgImage, puzzles: puzzles })
+            });
+            if (!res.ok) throw new Error('Failed to save');
+            alert("Level Saved Successfully!");
             onExit();
-        }, 1000);
+        } catch (error) {
+            console.error(error);
+            alert("Error saving level.");
+        } finally {
+            setSaving(false);
+        }
     };
 
-    // ... (Reuse logic from previous Builder for drag/drop)
-    // Simplified render for brevity in this hybrid view:
+    const addPuzzle = () => {
+        const newId = Math.max(...puzzles.map(p => p.id), 0) + 1;
+        setPuzzles([...puzzles, { id: newId, title: 'New Lock', desc: 'Description...', initialCode: '// Code', requiredString: 'fix', successMsg: 'Unlocked!', top: 50, left: 50 }]);
+        setEditingId(newId);
+    };
+
+    const updatePuzzle = (id: number, field: keyof PuzzleConfig, value: any) => {
+        setPuzzles(prev => prev.map(p => p.id === id ? { ...p, [field]: value } : p));
+    };
+
+    const deletePuzzle = (id: number) => {
+        setPuzzles(prev => prev.filter(p => p.id !== id));
+        if (editingId === id) setEditingId(null);
+    };
+
+    const handleFileDrop = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault(); e.stopPropagation();
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            const file = e.dataTransfer.files[0];
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (ev) => { if (ev.target?.result) setBgImage(ev.target.result as string); };
+                reader.readAsDataURL(file);
+            }
+        }
+    };
+
+    const startDrag = (e: React.MouseEvent, id: number) => {
+        e.stopPropagation(); setDraggedPuzzleId(id); setEditingId(id);
+    };
+
+    const onMouseMove = (e: React.MouseEvent) => {
+        if (draggedPuzzleId !== null && containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect();
+            const x = Math.min(Math.max(e.clientX - rect.left, 0), rect.width);
+            const y = Math.min(Math.max(e.clientY - rect.top, 0), rect.height);
+            setPuzzles(prev => prev.map(p => p.id === draggedPuzzleId ? { ...p, left: Number(((x / rect.width) * 100).toFixed(2)), top: Number(((y / rect.height) * 100).toFixed(2)) } : p));
+        }
+    };
+
     return (
-        <div className="min-h-screen bg-slate-900 text-white p-4">
+        <div className="min-h-screen bg-slate-900 text-white p-4" onMouseUp={() => setDraggedPuzzleId(null)}>
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Level Editor: {level.name}</h1>
+                <div className="flex items-center gap-2">
+                    <h1 className="text-2xl font-bold">Editing:</h1>
+                    <input value={levelName} onChange={(e) => setLevelName(e.target.value)} className="bg-slate-800 border border-slate-600 px-2 py-1 rounded" />
+                </div>
                 <div className="flex gap-2">
                     <button onClick={onExit} className="px-4 py-2 text-gray-400">Cancel</button>
-                    <button onClick={handleSave} className="bg-green-600 px-6 py-2 rounded flex items-center gap-2">
-                        {saving ? 'Saving...' : <><SaveIcon /> Save to DB</>}
-                    </button>
+                    <button onClick={handleSave} disabled={saving} className="bg-green-600 px-6 py-2 rounded flex items-center gap-2 disabled:opacity-50">{saving ? 'Saving...' : <><SaveIcon /> Save</>}</button>
                 </div>
             </div>
             
-<<<<<<< Updated upstream
-            <div className="border-2 border-dashed border-gray-700 h-[600px] rounded flex items-center justify-center relative">
-                 <p className="text-gray-500">
-                    [Builder Canvas - Reuse code from previous turn here]
-                    <br/> Drag & Drop Logic goes here.
-                 </p>
-                 {/* Visual placeholder for locks */}
-                 {puzzles.map(p => (
-                     <div key={p.id} className="absolute text-3xl" style={{top: `${p.top}%`, left: `${p.left}%`}}>🔒</div>
-                 ))}
-=======
             <div className="flex gap-4 h-[80vh]">
                 <div ref={containerRef} className="flex-1 bg-black rounded border-2 border-dashed border-gray-600 relative overflow-hidden select-none" onDrop={handleFileDrop} onDragOver={e => e.preventDefault()} onMouseMove={onMouseMove}>
                     {bgImage ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img src={bgImage} className="w-full h-full object-cover opacity-50 pointer-events-none" alt="bg" />
                     ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-gray-500 pointer-events-none">Drag Background Image Here</div>
@@ -372,94 +423,59 @@ function BuilderComponent({ level, onExit }: { level: LevelData, onExit: () => v
                         </div>
                     )}
                 </div>
->>>>>>> Stashed changes
             </div>
         </div>
     );
 }
 
-<<<<<<< Updated upstream
-// --- GAME COMPONENT (The actual playable part) ---
-function GameComponent({ level, onExit }: { level: LevelData, onExit: () => void }) {
-=======
+// --- GAME COMPONENT ---
 function GameComponent({ level, mode, challengeStats, onComplete, onExit }: { level: LevelData, mode: string, challengeStats?: {level: number, timeLeft: number}, onComplete: () => void, onExit: () => void }) {
->>>>>>> Stashed changes
     const [solvedIds, setSolvedIds] = useState<number[]>([]);
     const [activePuzzle, setActivePuzzle] = useState<PuzzleConfig | null>(null);
     const [input, setInput] = useState('');
-    const [timer, setTimer] = useState(0);
+    const [customTimer, setCustomTimer] = useState(0);
 
-<<<<<<< Updated upstream
-    // Timer
-=======
->>>>>>> Stashed changes
+    // Custom Mode Timer
     useEffect(() => {
-        const i = setInterval(() => setTimer(t => t + 1), 1000);
-        return () => clearInterval(i);
-    }, []);
+        if (mode === 'playing_custom') {
+            const i = setInterval(() => setCustomTimer(t => t + 1), 1000);
+            return () => clearInterval(i);
+        }
+    }, [mode]);
 
     const checkCode = () => {
         if (activePuzzle && input.includes(activePuzzle.requiredString)) {
-            setSolvedIds([...solvedIds, activePuzzle.id]);
+            const newSolved = [...solvedIds, activePuzzle.id];
+            setSolvedIds(newSolved);
             setActivePuzzle(null);
             setInput('');
-<<<<<<< Updated upstream
-=======
-
+            
+            // Check Win
             if (newSolved.length === (level.puzzles?.length || 0)) {
-                setTimeout(onComplete, 500);
+                setTimeout(onComplete, 500); // Slight delay for effect
             }
->>>>>>> Stashed changes
         } else {
             alert('Access Denied');
         }
     };
 
-    const isWin = solvedIds.length > 0 && solvedIds.length === level.puzzles.length;
+    const formatTime = (seconds: number) => {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${s.toString().padStart(2, '0')}`;
+    };
 
     return (
         <div className="relative min-h-screen bg-black text-white overflow-hidden">
+            {/* BG */}
             {level.bgImage ? (
-
+                // eslint-disable-next-line @next/next/no-img-element
                 <img src={level.bgImage} className="absolute inset-0 w-full h-full object-cover opacity-50" alt="bg" />
             ) : (
                 <div className="absolute inset-0 bg-gray-800 flex items-center justify-center text-gray-600">No Image</div>
             )}
 
-<<<<<<< Updated upstream
             {/* HUD */}
-            <div className="absolute top-4 left-4 z-10 flex gap-4">
-                <button onClick={onExit} className="bg-red-600 px-4 py-2 rounded font-bold">Exit</button>
-                <div className="bg-black/80 px-4 py-2 rounded border border-blue-500 font-mono">
-                    Time: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
-                </div>
-            </div>
-
-            {/* WIN SCREEN */}
-            {isWin && (
-                <div className="absolute inset-0 z-50 bg-black/90 flex flex-col items-center justify-center">
-                    <h1 className="text-6xl font-bold text-green-500 mb-4">ESCAPED!</h1>
-                    <p className="text-xl mb-8">Time: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}</p>
-                    
-                    <div className="bg-gray-800 p-6 rounded w-96 mb-8">
-                        <h3 className="border-b border-gray-600 pb-2 mb-2 font-bold">Global Leaderboard</h3>
-                        <div className="flex justify-between py-1 text-yellow-400">
-                            <span>1. SpeedRun_Bot</span>
-                            <span>0:45</span>
-                        </div>
-                        <div className="flex justify-between py-1 text-white">
-                            <span>2. YOU</span>
-                            <span>{Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}</span>
-                        </div>
-                    </div>
-
-                    <button onClick={onExit} className="bg-white text-black px-8 py-3 rounded font-bold">Menu</button>
-                </div>
-            )}
-
-            {/* PUZZLES */}
-            {level.puzzles.map(p => (
-=======
             <div className="absolute top-4 left-4 z-10 flex gap-4 w-full pr-8 justify-between">
                 <div className="flex gap-4">
                     <button onClick={onExit} className="bg-red-600 px-4 py-2 rounded font-bold hover:bg-red-500">Exit</button>
@@ -475,19 +491,20 @@ function GameComponent({ level, mode, challengeStats, onComplete, onExit }: { le
                 </div>
             </div>
 
+            {/* PUZZLES */}
             {level.puzzles?.map(p => (
->>>>>>> Stashed changes
                 <button
                     key={p.id}
                     disabled={solvedIds.includes(p.id)}
                     onClick={() => setActivePuzzle(p)}
                     style={{top: `${p.top}%`, left: `${p.left}%`}}
-                    className={`absolute transform -translate-x-1/2 -translate-y-1/2 p-2 hover:scale-110 transition-transform ${solvedIds.includes(p.id) ? 'text-green-500' : 'text-red-500'}`}
+                    className={`absolute transform -translate-x-1/2 -translate-y-1/2 p-2 hover:scale-110 transition-transform ${solvedIds.includes(p.id) ? 'text-green-500' : 'text-red-500 animate-pulse'}`}
                 >
                     {solvedIds.includes(p.id) ? <UnlockIcon /> : <LockIcon />}
                 </button>
             ))}
 
+            {/* MODAL */}
             {activePuzzle && (
                 <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-20">
                     <div className="bg-gray-800 p-8 rounded border border-blue-500 w-full max-w-lg">
@@ -507,10 +524,9 @@ function GameComponent({ level, mode, challengeStats, onComplete, onExit }: { le
             )}
         </div>
     );
-<<<<<<< Updated upstream
-=======
 }
 
+// --- LEADERBOARD REGISTER COMPONENT ---
 function LeaderboardRegister({ result, score, difficulty, onExit }: { result: string, score: number, difficulty: string, onExit: () => void }) {
     const [name, setName] = useState('');
     const [saving, setSaving] = useState(false);
@@ -518,6 +534,8 @@ function LeaderboardRegister({ result, score, difficulty, onExit }: { result: st
 
     const handleRegister = async () => {
         setSaving(true);
+        // Simulate API call to save score
+        // await fetch('/api/scores', { method: 'POST', body: JSON.stringify({ name, score, difficulty }) })
         setTimeout(() => {
             setSaving(false);
             setSaved(true);
@@ -564,5 +582,4 @@ function LeaderboardRegister({ result, score, difficulty, onExit }: { result: st
             </div>
         </div>
     );
->>>>>>> Stashed changes
 }
