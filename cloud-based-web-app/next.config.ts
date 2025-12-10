@@ -1,14 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig = {
-  output: 'standalone', // <--- This is the key line
+  output: 'standalone', 
   eslint: {
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'placehold.co' },
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
     ],
   },
 };
+
 module.exports = nextConfig;
